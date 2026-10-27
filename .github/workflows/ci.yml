@@ -1,0 +1,122 @@
+name: ci
+
+# macOS and Windows. The CMakeLists branches on APPLE and WIN32 and has no
+# Linux path at all, so ubuntu is not an option.
+#
+# The macOS runner cannot be relied on for an accelerated GL context, so the
+# harness runs `ihtest --offline` (every check that needs no GL) and the
+# geometry checks on Apple's software renderer when the runner has one. The
+# shaders are covered the other way, by glslc. The pixel checks proper run in
+# tools/verify.sh, on a Mac with a GPU.
+#
+# Windows builds the two DLLs -- each carrying every world as an RCDATA
+# resource -- and tools/wincheck.ps1 loads each one as a host would: plugMain's
+# info and parameters, and every world's bytes from the DLL's resources under
+# the name Worlds.cpp looks for. A GLEW-shaped or resource-shaped break is one
+# macOS is structurally blind to.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  macos:
+    name: macOS
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # The FFGL SDK is a submodule. Without this CMake fails at configure
+          # time with a missing-directory error that reads like a broken repo.
+          submodules: recursive
+
+      - name: Configure
+        # arm64 only, unlike the release build's universal arm64;x86_64 -- the
+        # second slice doubles the build for no extra signal, because a source
+        # break is not architecture-specific.
+        run: >
+          cmake -B build
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_OSX_ARCHITECTURES=arm64
+          -DISOHYPSE_BUILD_TOOLS=ON
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Parameters
+        # No GL needed, so this one cannot be a runner problem.
+        run: ./build/ihtest --list && ./build/ihtest --over --list
+
+      - name: Offline checks
+        # The sweep's arithmetic, the controls' mappings, every world decoding
+        # at its table's size, the Windows resource names. Defined once, in
+        # ihtest's main(); not listed here.
+        timeout-minutes: 15
+        run: ./build/ihtest --offline
+
+      - name: Geometry on the software renderer
+        # Apple's software renderer, where the runner has one: a check that
+        # holds only on a GPU is found here. A runner with no GL context at all
+        # is said so and skipped, never passed.
+        shell: bash
+        run: |
+          set +e
+          out=$( IHTEST_RENDERER=software ./build/ihtest --lines --width --flat --sweep --trail --globe --alpha --state --clock 2>&1 )
+          status=$?
+          set -e
+          printf '%s\n' "$out" | tail -60
+          case "$out" in
+            *"no GL 4.1 context"*) echo "::warning::no software GL context on this runner: the geometry checks were skipped"; exit 0 ;;
+          esac
+          exit $status
+
+      - name: Shaders compile
+        # The same script tools/verify.sh runs. GLSLC_REQUIRED: a runner
+        # without glslc must fail, not skip.
+        run: |
+          brew install shaderc
+          GLSLC_REQUIRED=1 tools/glslc.sh
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: isohypse-macos-arm64
+          path: build/*.bundle
+          if-no-files-found: error
+
+  windows:
+    name: Windows
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Configure
+        # The toolchain path MUST stay double-quoted: a `run:` step on Windows
+        # is PowerShell, and unquoted this expands to nothing. Tools off: ihtest
+        # links CGL and is macOS-only. Applocal off: see release.yml.
+        run: >
+          cmake -B build -A x64
+          -DCMAKE_BUILD_TYPE=Release
+          -DISOHYPSE_BUILD_TOOLS=OFF
+          -DVCPKG_APPLOCAL_DEPS=OFF
+          -DVCPKG_TARGET_TRIPLET=x64-windows-static-md
+          -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: The DLLs, as a host sees them
+        # pwsh checks only the LAST exit code of a step: each is checked here.
+        run: |
+          ./tools/wincheck.ps1 -Dll "build/Release/Isohypse.dll" -Name "SW Isohypse" -Id IH01 -Kind source -Params 42 -Data data
+          if( $LASTEXITCODE ) { exit $LASTEXITCODE }
+          ./tools/wincheck.ps1 -Dll "build/Release/Isohypse Over.dll" -Name "SW Isohypse Over" -Id IH02 -Kind effect -Params 45 -Data data
+          if( $LASTEXITCODE ) { exit $LASTEXITCODE }
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: isohypse-windows-x86_64
+          path: build/Release/*.dll
+          if-no-files-found: error

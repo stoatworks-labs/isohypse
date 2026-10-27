@@ -92,6 +92,13 @@ Heightfield LoadHeightfield( const WorldInfo& world );
 /// The folder or module the files are read from, for the log.
 std::string DataLocation();
 
+/// A world's resource name in the Windows DLL: the file name upper-cased,
+/// everything but A-Z and 0-9 an underscore ("naples-vesuvius.png" is
+/// NAPLES_VESUVIUS_PNG). CMakeLists.txt names the RCDATA entries by the same
+/// rule, tools/wincheck.ps1 checks the DLL by it, and ihtest --offline holds
+/// this function to it.
+std::string ResourceNameOf( const char* file );
+
 /// Fill a gap mask's holes from the measured texels around them, by pull-push
 /// (averaging down a pyramid of the measured ones, then filling each hole
 /// from the coarsest level that saw anything). Exposed for the harness.

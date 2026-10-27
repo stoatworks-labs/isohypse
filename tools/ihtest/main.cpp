@@ -1452,6 +1452,20 @@ void checkOffline()
 			longest = std::max( longest, static_cast< int >( std::strlen( w.name ) ) );
 		Check( longest <= 20, fmt( "every dropdown name is 20 characters or fewer (%d)", longest ) );
 	}
+	{
+		//The Windows DLL's resource names: CMakeLists.txt's rule, which
+		//tools/wincheck.ps1 checks the built DLL by.
+		const bool rule = ResourceNameOf( "naples-vesuvius.png" ) == "NAPLES_VESUVIUS_PNG"
+		                  && ResourceNameOf( "hawaii-big-island.png" ) == "HAWAII_BIG_ISLAND_PNG"
+		                  && ResourceNameOf( "earth.png" ) == "EARTH_PNG";
+		std::vector< std::string > names;
+		for( const auto* list : { &Globes(), &Places() } )
+			for( const WorldInfo& w : *list )
+				names.push_back( ResourceNameOf( w.file ) );
+		std::sort( names.begin(), names.end() );
+		const bool unique = std::adjacent_find( names.begin(), names.end() ) == names.end();
+		Check( rule && unique, fmt( "the %zu worlds' Windows resource names follow CMake's rule and are all different", names.size() ) );
+	}
 }
 
 //===========================================================================
@@ -1618,6 +1632,28 @@ int main( int argc, char** argv )
 		return g_failures == 0 ? 0 : 1;
 	}
 
+	//The parameters need no GL either: a plugin is constructed, never
+	//initialised. CI lists them on a runner with no GL context at all.
+	if( list )
+	{
+		IsohypsePlugin plugin( over );
+		for( const NamedParameter& p : listParameters( plugin ) )
+		{
+			std::printf( "%3u  %-16s %-8s %g", p.index, p.name.c_str(),
+			             p.type == FF_TYPE_OPTION ? "option" : p.type == FF_TYPE_INTEGER ? "integer" : p.type == FF_TYPE_EVENT ? "event" : p.type == FF_TYPE_BOOLEAN ? "bool" : p.type == FF_TYPE_TEXT ? "text" : "standard",
+			             p.value );
+			if( p.type == FF_TYPE_OPTION )
+			{
+				std::printf( "  [" );
+				for( unsigned int e = 0; e < plugin.GetNumParamElements( p.index ); ++e )
+					std::printf( "%s%s", e ? ", " : "", plugin.GetParamElementName( p.index, e ) );
+				std::printf( "]" );
+			}
+			std::printf( "\n" );
+		}
+		return 0;
+	}
+
 	CGLContextObj context = createContext();
 	if( context == nullptr )
 	{
@@ -1716,25 +1752,7 @@ int main( int argc, char** argv )
 	}
 
 	int status = 0;
-	if( list )
-	{
-		IsohypsePlugin plugin( over );
-		for( const NamedParameter& p : listParameters( plugin ) )
-		{
-			std::printf( "%3u  %-16s %-8s %g", p.index, p.name.c_str(),
-			             p.type == FF_TYPE_OPTION ? "option" : p.type == FF_TYPE_INTEGER ? "integer" : p.type == FF_TYPE_EVENT ? "event" : p.type == FF_TYPE_BOOLEAN ? "bool" : p.type == FF_TYPE_TEXT ? "text" : "standard",
-			             p.value );
-			if( p.type == FF_TYPE_OPTION )
-			{
-				std::printf( "  [" );
-				for( unsigned int e = 0; e < plugin.GetNumParamElements( p.index ); ++e )
-					std::printf( "%s%s", e ? ", " : "", plugin.GetParamElementName( p.index, e ) );
-				std::printf( "]" );
-			}
-			std::printf( "\n" );
-		}
-	}
-	else if( pipe || film > 0 )
+	if( pipe || film > 0 )
 		//The Over's --pipe reads frames until its input ends; the source's
 		//writes --frames of them, or for ever.
 		status = runPipe( over, width, height, fps, scriptPath, film > 0 ? film : ( framesGiven ? frames : -1 ), pipe && over,
