@@ -116,30 +116,12 @@ HMODULE thisModule()
 	return module;
 }
 
-/// "naples-vesuvius.png" is the resource NAPLES_VESUVIUS_PNG (see
-/// CMakeLists.txt, which writes the .rc the same way).
-std::string resourceName( const char* file )
-{
-	std::string name;
-	for( const char* c = file; *c; ++c )
-	{
-		const char ch = *c;
-		if( ch >= 'a' && ch <= 'z' )
-			name += static_cast< char >( ch - 'a' + 'A' );
-		else if( ( ch >= 'A' && ch <= 'Z' ) || ( ch >= '0' && ch <= '9' ) )
-			name += ch;
-		else
-			name += '_';
-	}
-	return name;
-}
-
 bool readResource( const char* file, std::vector< unsigned char >& bytes )
 {
 	HMODULE module = thisModule();
 	if( module == nullptr )
 		return false;
-	const std::string name = resourceName( file );
+	const std::string name = ResourceNameOf( file );
 	HRSRC found            = FindResourceA( module, name.c_str(), MAKEINTRESOURCEA( 10 ) );// RT_RCDATA
 	if( found == nullptr )
 		return false;
@@ -363,6 +345,22 @@ Heightfield LoadHeightfield( const WorldInfo& world )
 	}
 	stbi_image_free( pixels );
 	return out;
+}
+
+std::string ResourceNameOf( const char* file )
+{
+	std::string name;
+	for( const char* c = file; *c; ++c )
+	{
+		const char ch = *c;
+		if( ch >= 'a' && ch <= 'z' )
+			name += static_cast< char >( ch - 'a' + 'A' );
+		else if( ( ch >= 'A' && ch <= 'Z' ) || ( ch >= '0' && ch <= '9' ) )
+			name += ch;
+		else
+			name += '_';
+	}
+	return name;
 }
 
 std::string DataLocation()

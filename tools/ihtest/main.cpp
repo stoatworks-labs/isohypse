@@ -1452,6 +1452,20 @@ void checkOffline()
 			longest = std::max( longest, static_cast< int >( std::strlen( w.name ) ) );
 		Check( longest <= 20, fmt( "every dropdown name is 20 characters or fewer (%d)", longest ) );
 	}
+	{
+		//The Windows DLL's resource names: CMakeLists.txt's rule, which
+		//tools/wincheck.ps1 checks the built DLL by.
+		const bool rule = ResourceNameOf( "naples-vesuvius.png" ) == "NAPLES_VESUVIUS_PNG"
+		                  && ResourceNameOf( "hawaii-big-island.png" ) == "HAWAII_BIG_ISLAND_PNG"
+		                  && ResourceNameOf( "earth.png" ) == "EARTH_PNG";
+		std::vector< std::string > names;
+		for( const auto* list : { &Globes(), &Places() } )
+			for( const WorldInfo& w : *list )
+				names.push_back( ResourceNameOf( w.file ) );
+		std::sort( names.begin(), names.end() );
+		const bool unique = std::adjacent_find( names.begin(), names.end() ) == names.end();
+		Check( rule && unique, fmt( "the %zu worlds' Windows resource names follow CMake's rule and are all different", names.size() ) );
+	}
 }
 
 //===========================================================================
