@@ -4,9 +4,10 @@
 > (Anthropic), directed and reviewed by a human author. It has been loaded into
 > **Resolume Arena 7.28.1 on macOS** and driven there over Arena's REST API: both plugins
 > register, every one of the source's controls changes Arena's output, Sweep Bars follows
-> Arena's own tempo, and the Over at Mix 0 hands back its clip bit for bit. It has **never
-> been built for Windows**. Everything else below is measured by an offline harness that drives the real plugin classes in a headless GL
-> context on this Mac's GPU: a ramp crosses **exactly** the number of contours it should,
+> Arena's own tempo, and the Over at Mix 0 hands back its clip bit for bit. On Windows it
+> is **built and loaded in CI** but has never been in Resolume there. Everything else
+> below is measured by an offline harness that drives the real plugin classes in a
+> headless GL context on this Mac's GPU: a ramp crosses **exactly** the number of contours it should,
 > each **within 0.013 px** of where the arithmetic puts it; a contour is the same width,
 > **within 3%**, on slopes eight times apart; every contour's strength behind the sweep
 > matches the CPU's own model of the sweep **within 0.0005**, in all five modes; and
@@ -161,9 +162,17 @@ frame with the clip inset in it, so the Over's worlds draw past the clip's edges
 | SW Isohypse | Generated craters, morphing | 3.31 | 4.28 |
 | SW Isohypse Over | the clip as the map | 0.49 | 1.88 |
 
-**Not tested anywhere else.** It has never been loaded into Resolume on Windows, and the
-Windows build (which carries the maps as resources in the DLL) has never been compiled. No
-GPU but this Mac's has run it. There is no user guide, browser demo, video or preset yet.
+### On Windows, in CI
+
+`ci.yml` builds both DLLs on GitHub's `windows-2022` (MSVC, GLEW static from vcpkg) on every
+pull request, and `tools/wincheck.ps1` loads each one as a host would: `SW Isohypse` /
+`IH01` / source with 42 parameters and `SW Isohypse Over` / `IH02` / effect with 45, the
+names read back as the sixteen characters a host reads, and all 31 maps read out of each
+DLL's own resources, byte for byte the files in `data/`. First green 27 October 2026. A
+Windows runner has no GL, so nothing there draws a frame.
+
+**Not tested anywhere else.** It has never been loaded into Resolume on Windows, and no GPU
+but this Mac's has run it. There is no user guide, browser demo, video or preset yet.
 Each bundle carries every map, 40 MB of them.
 
 ## Build

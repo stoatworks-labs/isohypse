@@ -51,6 +51,12 @@ shader's `ageOf` are one function in two languages), or the World/Place dropdown
 - The checks can fail: `./build/ihtest --negative` (5 wrong models), `tools/mutate.sh`
   (13 mutants).
 - Render cost: `./build/ihtest --bench`.
+- **CI** (`.github/workflows/ci.yml`): macOS builds arm64 and runs `--list`, `--offline`,
+  the geometry checks on the software renderer if the runner has one, and `glslc`;
+  Windows builds both DLLs and runs `tools/wincheck.ps1` on each (loads it, reads
+  plugMain's info and parameters, reads every world back out of the DLL's RCDATA).
+  `release.yml` builds the archives (each with ATTRIBUTIONS.md and SOURCES.md) and
+  publishes on a `v*` tag.
 - `IHTEST_RENDERER=software` runs any of it on Apple's software renderer.
 
 ## Notes
