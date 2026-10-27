@@ -1,11 +1,11 @@
 # isohypse
 
 > **AI-assisted project.** This codebase was created with [Claude](https://claude.com/claude-code)
-> (Anthropic), directed and reviewed by a human author. It has **never been loaded into
-> Resolume**, on either platform, and has never been built for Windows; on macOS it is
-> loaded by [oxbow](https://github.com/stoatworks-labs/oxbow), a real FFGL host that is
-> not Resolume. Everything below
-> is measured by an offline harness that drives the real plugin classes in a headless GL
+> (Anthropic), directed and reviewed by a human author. It has been loaded into
+> **Resolume Arena 7.28.1 on macOS** and driven there over Arena's REST API: both plugins
+> register, every one of the source's controls changes Arena's output, Sweep Bars follows
+> Arena's own tempo, and the Over at Mix 0 hands back its clip bit for bit. It has **never
+> been built for Windows**. Everything else below is measured by an offline harness that drives the real plugin classes in a headless GL
 > context on this Mac's GPU: a ramp crosses **exactly** the number of contours it should,
 > each **within 0.013 px** of where the arithmetic puts it; a contour is the same width,
 > **within 3%**, on slopes eight times apart; every contour's strength behind the sweep
@@ -131,6 +131,26 @@ universal Release build (27 October 2026). What it establishes:
 | software renderer | `--lines`, `--width`, `--flat`, `--sweep`, `--trail`, `--globe`, `--alpha`, `--state` and `--clock` pass again on Apple's software renderer |
 | the bundles | both universal (`x86_64 arm64`), export `plugMain`, ad-hoc sign, carry all 31 maps; `oxbow` reports `SW Isohypse` / `IH01` / `source` and `SW Isohypse Over` / `IH02` / `effect` and renders 120 frames through both, reading the maps from the bundle |
 
+### In Resolume Arena, on macOS
+
+Arena 7.28.1 (revision 26535) on this Mac, 27 October 2026, the universal bundles from
+`tools/verify.sh` installed into Extra Effects, driven over Arena's REST API and read back
+from its own snapshots of the composition and of each layer:
+
+| check | result |
+| --- | --- |
+| load | both bundles load; Arena registers `SW Isohypse` / `IH01` as a source and `SW Isohypse Over` / `IH02` as an effect; nothing in Arena's log or the plugin's |
+| params | the source's 42 controls as Arena lists them match the plugin's, name for name, in order, with their defaults; Index Every and Seed arrive with their real ranges (0..10, 0..999); the Over adds Arena's own Opacity to its 45 |
+| controls | all **38** of the source's controls change Arena's output (static controls against a still frame, whose floor is 0.000; Spin, Flow, Sweep, Sweep Time, Sweep Bars and Morph by motion; Restart by its jump) |
+| bars | Sweep Bars at 1 bar and 120 BPM moves; with Arena's tempo paused it stops dead (0.000) while Free carries on; at 30 BPM frames a whole bar apart match (0.21) where half a bar apart differ (5.95) |
+| Over | on Resolume's own *Beat 003*: World defaults to Clip; the clip contoured, the Moon over it, Neon with a Rise; at Mix 0 the output is the bare clip to the bit |
+| raster | the source clip's own resolution changed under the running instance: the globe 664 px across at 720 lines (0.92 × 720 = 662, the limb's antialiasing either side) and 994 at 1080 (994) |
+
+Two things that are Arena's and not the plugin's: a source clip keeps the resolution it was
+made at when the composition changes size (its resize is *Original*, so it shows at that
+size), and a clip smaller than the composition reaches an effect as the composition's
+frame with the clip inset in it, so the Over's worlds draw past the clip's edges.
+
 **Cost** on this Mac's GPU (`ihtest --bench`, ms a frame, `glFinish` timed):
 
 | plugin | what | 1080p | 4K |
@@ -141,11 +161,10 @@ universal Release build (27 October 2026). What it establishes:
 | SW Isohypse | Generated craters, morphing | 3.31 | 4.28 |
 | SW Isohypse Over | the clip as the map | 0.49 | 1.88 |
 
-**Not tested anywhere else.** It has never been loaded into Resolume, on macOS or
-Windows, and the Windows build (which carries the maps as resources in the DLL) has never
-been compiled. No GPU but this Mac's has run it. Sweep Bars has only met a synthetic host.
-There is no user guide, browser demo, video or preset yet. Each bundle carries every map,
-40 MB of them.
+**Not tested anywhere else.** It has never been loaded into Resolume on Windows, and the
+Windows build (which carries the maps as resources in the DLL) has never been compiled. No
+GPU but this Mac's has run it. There is no user guide, browser demo, video or preset yet.
+Each bundle carries every map, 40 MB of them.
 
 ## Build
 

@@ -95,7 +95,11 @@ order of pen; with Flood up, it is the sea rising.
 
 ## Open questions
 
-- Never loaded in Resolume. The Windows build (RCDATA worlds) has never been compiled.
+- Loaded in Resolume only on macOS (Arena 7.28.1, 27 October 2026, over REST: see the
+  README's Status). Never on Windows, where the build (RCDATA worlds) has never been
+  compiled. In Arena a source clip keeps the resolution it was made at when the
+  composition is resized, and a clip smaller than the composition reaches an effect inset
+  in a composition-sized frame: both Arena's, both look like plugin bugs at first sight.
 - The data is 40.5 MB (Earth alone 11.9 MB) and each bundle carries all of it. Earth at
   2048 × 1024 would make it about 31 MB, the other globes at 1024 × 512 about 25 MB; or one
   shared data folder.
