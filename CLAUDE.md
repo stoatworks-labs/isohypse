@@ -78,7 +78,10 @@ shader's `ageOf` are one function in two languages), or the World/Place dropdown
 - `isohypse_core` is an OBJECT library: each plugin registers itself from a file-scope
   constructor nothing references.
 - The macOS build must be universal. Check with `lipo`, never the build log.
-- **Generated, do not edit here:** `source/StoatworksAbout*.h` (stoatworks-backend's
-  `sync-about.py`, from the website's projects.json — a provisional hand copy until the
-  project is registered), `ATTRIBUTIONS.md` (likewise), and `source/WorldTable.inc` with
-  `data/*.png` (`tools/make-worlds.py`).
+- **Generated, do not edit here:** `source/StoatworksAbout.h` (stoatworks-backend's
+  `sync-about.py`, from the website's projects.json), `ATTRIBUTIONS.md` (the backend's
+  `sync-attributions.py`; the map credits are its `data` entries in
+  `attributions/derived.json`), `.github/FUNDING.yml` and `.github/ISSUE_TEMPLATE/` (the
+  backend's sync scripts), and `source/WorldTable.inc` with `data/*.png`
+  (`tools/make-worlds.py`). A new map's credit goes in `data/SOURCES.md` and in
+  derived.json's `data` list together.

@@ -73,9 +73,9 @@ jobs:
       - name: Check the DLLs (Windows)
         if: runner.os == 'Windows'
         run: |
-          ./tools/wincheck.ps1 -Dll "build/Release/Isohypse.dll" -Name "SW Isohypse" -Id IH01 -Kind source -Params 42 -Data data
+          ./tools/wincheck.ps1 -Dll "build/Release/Isohypse.dll" -Name "SW Isohypse" -Id IH01 -Kind source -Params 43 -Data data
           if( $LASTEXITCODE ) { exit $LASTEXITCODE }
-          ./tools/wincheck.ps1 -Dll "build/Release/Isohypse Over.dll" -Name "SW Isohypse Over" -Id IH02 -Kind effect -Params 45 -Data data
+          ./tools/wincheck.ps1 -Dll "build/Release/Isohypse Over.dll" -Name "SW Isohypse Over" -Id IH02 -Kind effect -Params 46 -Data data
           if( $LASTEXITCODE ) { exit $LASTEXITCODE }
 
       - name: Derive version

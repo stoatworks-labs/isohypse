@@ -2,7 +2,7 @@
     What a host sees of a built Windows DLL, with no GL and no Resolume.
 
         tools/wincheck.ps1 -Dll build/Release/Isohypse.dll -Name "SW Isohypse" -Id IH01 `
-                           -Kind source -Params 42 -Data data
+                           -Kind source -Params 43 -Data data
 
     It LOADS the DLL (so a missing runtime or dependency fails here, where
     dumpbin cannot see it), finds plugMain, and asks it what Resolume asks
