@@ -1632,6 +1632,28 @@ int main( int argc, char** argv )
 		return g_failures == 0 ? 0 : 1;
 	}
 
+	//The parameters need no GL either: a plugin is constructed, never
+	//initialised. CI lists them on a runner with no GL context at all.
+	if( list )
+	{
+		IsohypsePlugin plugin( over );
+		for( const NamedParameter& p : listParameters( plugin ) )
+		{
+			std::printf( "%3u  %-16s %-8s %g", p.index, p.name.c_str(),
+			             p.type == FF_TYPE_OPTION ? "option" : p.type == FF_TYPE_INTEGER ? "integer" : p.type == FF_TYPE_EVENT ? "event" : p.type == FF_TYPE_BOOLEAN ? "bool" : p.type == FF_TYPE_TEXT ? "text" : "standard",
+			             p.value );
+			if( p.type == FF_TYPE_OPTION )
+			{
+				std::printf( "  [" );
+				for( unsigned int e = 0; e < plugin.GetNumParamElements( p.index ); ++e )
+					std::printf( "%s%s", e ? ", " : "", plugin.GetParamElementName( p.index, e ) );
+				std::printf( "]" );
+			}
+			std::printf( "\n" );
+		}
+		return 0;
+	}
+
 	CGLContextObj context = createContext();
 	if( context == nullptr )
 	{
@@ -1730,25 +1752,7 @@ int main( int argc, char** argv )
 	}
 
 	int status = 0;
-	if( list )
-	{
-		IsohypsePlugin plugin( over );
-		for( const NamedParameter& p : listParameters( plugin ) )
-		{
-			std::printf( "%3u  %-16s %-8s %g", p.index, p.name.c_str(),
-			             p.type == FF_TYPE_OPTION ? "option" : p.type == FF_TYPE_INTEGER ? "integer" : p.type == FF_TYPE_EVENT ? "event" : p.type == FF_TYPE_BOOLEAN ? "bool" : p.type == FF_TYPE_TEXT ? "text" : "standard",
-			             p.value );
-			if( p.type == FF_TYPE_OPTION )
-			{
-				std::printf( "  [" );
-				for( unsigned int e = 0; e < plugin.GetNumParamElements( p.index ); ++e )
-					std::printf( "%s%s", e ? ", " : "", plugin.GetParamElementName( p.index, e ) );
-				std::printf( "]" );
-			}
-			std::printf( "\n" );
-		}
-	}
-	else if( pipe || film > 0 )
+	if( pipe || film > 0 )
 		//The Over's --pipe reads frames until its input ends; the source's
 		//writes --frames of them, or for ever.
 		status = runPipe( over, width, height, fps, scriptPath, film > 0 ? film : ( framesGiven ? frames : -1 ), pipe && over,
