@@ -1270,7 +1270,10 @@ void checkControls()
 		{ PT_DEPTHS, false, { earth }, 0.5f, 1.0f },
 		{ PT_SWEEP, false, {}, 1.0f, 0.0f },
 		{ PT_SWEEP_TIME, false, {}, 0.4f, 0.2f },
-		{ PT_SWEEP_BARS, false, {}, 0.0f, 1.0f },
+		//Floor 0 and Trail 1 make every line's light depend on where the sweep is:
+		//at the defaults half a second puts both sweeps low on the Moon, with
+		//little ground to cross, and the Over's difference was 0.00003.
+		{ PT_SWEEP_BARS, false, { "Floor=0", "Trail=1" }, 0.0f, 1.0f },
 		{ PT_SWEEP_LEVEL, false, { "Sweep=Manual" }, 0.3f, 0.6f },
 		{ PT_SWEEP_GLOW, false, midway, 0.6f, 0.0f },
 		{ PT_TRAIL, false, midway, 0.35f, 0.9f },
@@ -1298,14 +1301,13 @@ void checkControls()
 	};
 	std::vector< bool > covered( PT_ABOUT_TEXT, false );
 	const int W = 320, H = 180;
-	for( const Probe& probe : probes )
-	{
+	auto difference = [ & ]( const Probe& probe, bool over, const std::vector< std::string >& context ) {
 		Floats out[ 2 ];
 		for( int side = 0; side < 2; ++side )
 		{
-			Rig rig( probe.over );
+			Rig rig( over );
 			rig.Init( W, H );
-			applyAll( rig.plugin, probe.context );
+			applyAll( rig.plugin, context );
 			float value = side == 0 ? probe.a : probe.b;
 			//World: a and b < 0 name the defaults' neighbours.
 			if( probe.id == PT_WORLD )
@@ -1326,9 +1328,28 @@ void checkControls()
 		double d = 0.0;
 		for( size_t i = 0; i < out[ 0 ].size(); ++i )
 			d += std::fabs( out[ 0 ][ i ] - out[ 1 ][ i ] );
-		d /= out[ 0 ].size();
+		return d / out[ 0 ].size();
+	};
+	for( const Probe& probe : probes )
+	{
+		const double d = difference( probe, probe.over, probe.context );
 		covered[ probe.id ] = true;
 		Check( d > 1.0e-4, fmt( "%-14s %s: %.5f", NameOf( probe.id ), probe.over ? "(Over)" : "      ", d ) );
+	}
+	//The Over declares most of the source's controls too, and each one it shows
+	//a host has to change ITS picture: Background didn't, as the Over's ground is
+	//always opaque, and a source-only sweep never saw it. Over the Moon, as the
+	//Over's own default world, Clip, has no globe, sea or place to act on.
+	const std::vector< unsigned int >& overOrder = HostOrder( true );
+	for( const Probe& probe : probes )
+	{
+		if( probe.over || std::find( overOrder.begin(), overOrder.end(), probe.id ) == overOrder.end() )
+			continue;
+		std::vector< std::string > context = probe.context;
+		if( std::none_of( context.begin(), context.end(), []( const std::string& s ) { return s.rfind( "World=", 0 ) == 0; } ) )
+			context.insert( context.begin(), "World=Moon" );
+		const double d = difference( probe, true, context );
+		Check( d > 1.0e-4, fmt( "%-14s (Over, shared): %.5f", NameOf( probe.id ), d ) );
 	}
 	int missing = 0;
 	for( unsigned int id = 0; id < PT_ABOUT_TEXT; ++id )

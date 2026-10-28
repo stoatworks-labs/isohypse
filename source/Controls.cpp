@@ -46,8 +46,11 @@ const std::vector< unsigned int >& HostOrder( bool effect )
 {
 	auto build = []( bool over ) {
 		std::vector< unsigned int > order;
+		//Not Background on the Over: its ground is always opaque, the clip mixed
+		//in by Clip Show, so the composite never reads it.
 		for( unsigned int id = PT_WORLD; id <= PT_MORPH; ++id )
-			order.push_back( id );
+			if( !( over && id == PT_BACKGROUND ) )
+				order.push_back( id );
 		if( over )
 			order.insert( order.end(), { PT_CLIP_SHOW, PT_INVERT, PT_MIX } );
 		for( unsigned int id = PT_ABOUT_TEXT; id < PT_COUNT; ++id )
