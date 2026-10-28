@@ -66,6 +66,10 @@ macOS builds are signed and notarised and open normally. The Windows builds are 
 
 <!-- downloads:end -->
 
+## Video
+
+[![Isohypse: contour sweeps over the Moon, Mars and Earth, for Resolume](docs/video-thumb.png)](https://www.youtube.com/watch?v=8brna6mUpxE)
+
 ## The one idea
 
 A contour is where the height is a whole number of intervals. The plugin counts height in
