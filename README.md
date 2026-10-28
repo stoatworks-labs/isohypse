@@ -35,6 +35,35 @@ Moon at the defaults; Earth in Survey with tints and shade; Everest in Plotter w
 little Wobble; the Over on Resolume's own *Beat 003* clip.</sub>
 
 <!-- downloads:start -->
+
+## Download
+
+**[v0.1.0](https://github.com/stoatworks-labs/isohypse/releases/tag/v0.1.0)** — prebuilt for macOS and Windows. Pick your platform:
+
+<details>
+<summary><b>macOS</b> — Universal (Apple Silicon + Intel)</summary>
+
+| Build | Download | Size |
+| --- | --- | --- |
+| Universal (Apple Silicon + Intel) · .dmg disk image | [`isohypse-0.1.0-macos-universal.dmg`](https://github.com/stoatworks-labs/isohypse/releases/download/v0.1.0/isohypse-0.1.0-macos-universal.dmg) | 82 MB |
+| Universal (Apple Silicon + Intel) · .zip archive | [`isohypse-macos-universal.zip`](https://github.com/stoatworks-labs/isohypse/releases/latest/download/isohypse-macos-universal.zip) | 82 MB |
+
+</details>
+
+<details>
+<summary><b>Windows</b> — x64</summary>
+
+| Build | Download | Size |
+| --- | --- | --- |
+| x64 · .exe installer | [`isohypse-0.1.0-windows-x86_64-setup.exe`](https://github.com/stoatworks-labs/isohypse/releases/download/v0.1.0/isohypse-0.1.0-windows-x86_64-setup.exe) | 82 MB |
+| x64 · .zip archive | [`isohypse-windows-x86_64.zip`](https://github.com/stoatworks-labs/isohypse/releases/latest/download/isohypse-windows-x86_64.zip) | 81 MB |
+
+</details>
+
+All builds, checksums and release notes: [github.com/stoatworks-labs/isohypse/releases](https://github.com/stoatworks-labs/isohypse/releases).
+
+macOS builds are signed and notarised and open normally. The Windows builds are unsigned, so SmartScreen warns once.
+
 <!-- downloads:end -->
 
 ## The one idea
