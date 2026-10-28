@@ -44,11 +44,14 @@ in. Each panel is a whole 1280 × 720 frame at reduced size.*
 > changing the Over's picture too. Nine of the checks pass again on Apple's software
 > renderer.
 >
-> **On Windows** both DLLs are built and loaded in CI, on GitHub's `windows-2022`: each registers
-> with its parameters, and all 31 maps read back out of each DLL byte for byte. That runner has no
-> GPU, so nothing on Windows has drawn a frame, and it has **never been loaded into Resolume on
-> Windows**. No GPU but this one Mac's has run it. Try it on a spare layer before you put it in a
-> show.
+> **On Windows** it has been in Resolume too. The fleet's Arena gate ran CI's release build in
+> Resolume Arena 7.27.1 on software rendering, with no GPU: both plugins load, register (`IH01` a
+> source, `IH02` an effect) and render, every control matches its name, order, type, range and
+> default, and Arena's log stayed clean: 15 checks passed and none failed. Against still pictures,
+> 34 of the source's 35 testable controls and all 38 of the Over's changed the picture; Spin turns
+> the globe, so a still can't pin it down, and Sweep Time and Sweep Bars only set a moving sweep's
+> pace. Software rendering says nothing about a GPU or about speed, and no GPU but this one Mac's
+> has run it. Try it on a spare layer before you put it in a show.
 >
 > This codebase was created with AI assistance, directed and reviewed by a human author.
 
@@ -696,7 +699,8 @@ Turn Lines up, or lift the clip's levels before the Over.
 
 ## Known limits
 
-- **Never in Resolume on Windows.** The DLLs load in CI, but nothing on Windows has drawn a frame.
+- **Windows on software rendering only.** Resolume on Windows has run it on a GPU-less machine,
+  so nothing says how fast it is on a real graphics card there.
 - **Only ever run on one GPU**, an Apple M4 Max, plus Apple's software renderer, although the macOS
   build has an Intel slice.
 - **The maps' own resolution.** Earth is about 10 km a pixel and the Moon about 5; a place is 512

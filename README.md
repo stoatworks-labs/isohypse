@@ -4,8 +4,10 @@
 > (Anthropic), directed and reviewed by a human author. It has been loaded into
 > **Resolume Arena 7.28.1 on macOS** and driven there over Arena's REST API: both plugins
 > register, every one of the source's controls changes Arena's output, Sweep Bars follows
-> Arena's own tempo, and the Over at Mix 0 hands back its clip bit for bit. On Windows it
-> is **built and loaded in CI** but has never been in Resolume there. Everything else
+> Arena's own tempo, and the Over at Mix 0 hands back its clip bit for bit. On Windows the
+> fleet's Arena gate ran the release build in **Resolume Arena 7.27.1**, on software
+> rendering: 15 checks passed, none failed, and every testable control but Spin changed the
+> picture. Everything else
 > below is measured by an offline harness that drives the real plugin classes in a
 > headless GL context on this Mac's GPU: a ramp crosses **exactly** the number of contours it should,
 > each **within 0.013 px** of where the arithmetic puts it; a contour is the same width,
@@ -104,7 +106,7 @@ others; it has a sea floor.
 
 ## Status
 
-**v0.1.0, unreleased, 27 October 2026: early days.**
+**v0.1.0, released 28 October 2026: early days.**
 
 ### Measured offline, on macOS
 
@@ -175,11 +177,26 @@ push to main and every pull request, and `tools/wincheck.ps1` loads each one as 
 with 45 (42 and 45 before the changes above), the
 names read back as the sixteen characters a host reads, and all 31 maps read out of each
 DLL's own resources, byte for byte the files in `data/`. First green 27 October 2026. A
-Windows runner has no GL, so nothing there draws a frame.
+Windows runner has no GL, so nothing there draws a frame. `release.yml` runs the same check
+on `windows-latest`, whose build left the count's high half non-zero and showed the check
+was reading it whole; it reads the low 32 bits now, as a host does.
 
-**Not tested anywhere else.** It has never been loaded into Resolume on Windows, and no GPU
-but this Mac's has run it. The user guide is [docs/USER-GUIDE.md](docs/USER-GUIDE.md); there
-is no browser demo or preset yet.
+### In Resolume Arena, on Windows
+
+The fleet's Arena gate (`plugin-bench`) ran CI's release build of main 9665a6a in Resolume
+Arena 7.27.1 on win-lab, 28 October 2026: software rendering (Mesa llvmpipe), no GPU. Both
+DLLs load; `SW Isohypse` registers as `IH01`, a source, and `SW Isohypse Over` as `IH02`, an
+effect, each in Arena's own list; all 43 and 46 controls (the Over's counting Arena's
+Opacity) match their names, order, types, ranges and defaults; the two 16-character names
+arrive whole; both render; Arena's log stayed clean and Arena stayed up. **15 passed, 0
+failed, 2 skipped.** Against still pictures, 34 of the source's 35 testable controls and all
+38 of the Over's changed the picture; Spin was inconclusive, as a turning globe never holds
+still, and Sweep Time and Sweep Bars set the pace of a moving sweep, which two stills can't
+show (Arena on macOS followed them by motion). Software rendering says nothing about a GPU or
+about speed.
+
+**Not tested anywhere else.** No GPU but this Mac's has run it. The user guide is
+[docs/USER-GUIDE.md](docs/USER-GUIDE.md); there is no browser demo or preset yet.
 Each bundle carries every map, 40 MB of them.
 
 ## Build
