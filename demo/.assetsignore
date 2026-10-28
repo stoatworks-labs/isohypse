@@ -1,0 +1,7 @@
+# Not part of the page. tools/ holds check_shaders.py (the check that the
+# demo's shader copies still match the plugin's, and the script that splices
+# them), make_worlds.py (which makes worlds/ from the plugin's data/) and
+# crosscheck/ (the harness that renders the plugin and this page side by side);
+# wrangler would otherwise upload them and serve them, which is neither useful
+# nor anybody's business.
+tools/

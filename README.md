@@ -229,8 +229,17 @@ show (Arena on macOS followed them by motion). Software rendering says nothing a
 about speed.
 
 **Not tested anywhere else.** No GPU but this Mac's has run it. The user guide is
-[docs/USER-GUIDE.md](docs/USER-GUIDE.md); there is no browser demo or preset yet.
+[docs/USER-GUIDE.md](docs/USER-GUIDE.md); there are no presets.
 Each bundle carries every map, 40 MB of them.
+
+## Browser demo
+
+**<https://isohypse-demo.stoatworks-labs.com/>**: both plugins, every control with its own
+name, group and default. The shaders are the plugin's own GLSL, spliced unedited
+(`demo/tools/check_shaders.py`, run by `tools/verify.sh`); the CPU half is a JavaScript port,
+and `demo/tools/crosscheck/` renders it and `ihtest` at the same settings: in twelve cases at least
+99.979% of pixels are within one level of the plugin's. The places are the plugin's own maps; the
+globes are at half its resolution. It is a demo, not the plugin, and says what it leaves out.
 
 ## Build
 

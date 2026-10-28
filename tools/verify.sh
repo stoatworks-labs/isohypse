@@ -65,6 +65,17 @@ step "Shaders"
 tools/glslc.sh || fail "a shader does not compile"
 
 #---------------------------------------------------------------------------
+step "Browser demo"
+#---------------------------------------------------------------------------
+# The page runs the plugin's shaders and the plugin's maps: a shader edited
+# here and not spliced across, or a map remade by tools/make-worlds.py and not
+# carried into demo/worlds/, would leave it drawing something else and saying
+# it is the plugin. demo/tools/crosscheck/ compares the pictures and needs
+# Chrome and node, so it is run by hand (AGENTS.md).
+python3 demo/tools/check_shaders.py || fail "the demo's shaders have drifted from source/Shaders.cpp"
+python3 demo/tools/make_worlds.py --check || fail "demo/worlds/ is not what demo/tools/make_worlds.py makes from data/"
+
+#---------------------------------------------------------------------------
 step "Submodule"
 #---------------------------------------------------------------------------
 if [[ ! -f external/ffgl/CMakeLists.txt ]]; then

@@ -720,7 +720,10 @@ Turn Lines up, or lift the clip's levels before the Over.
   included.
 - **Wobble is subtle**: 4 pixels at most at 1080 lines.
 - **No audio input.** Map Restart, Sweep Level and the rest to Resolume's audio analysis, BPM or cues.
-- **No presets and no browser demo.** Resolume saves parameter presets itself.
+- **No presets.** Resolume saves parameter presets itself. There is a
+  [browser demo](https://isohypse-demo.stoatworks-labs.com/) to try it before installing: the
+  plugin's own shaders and maps (the globes at half the resolution) with every control, but a
+  browser, not Resolume, and it says what it leaves out.
 
 ---
 
@@ -728,6 +731,7 @@ Turn Lines up, or lift the clip's levels before the Over.
 
 - Project page: [stoatworks-labs.com/software/isohypse](https://stoatworks-labs.com/software/isohypse/)
 - Source: [github.com/stoatworks-labs/isohypse](https://github.com/stoatworks-labs/isohypse)
+- Browser demo: [isohypse-demo.stoatworks-labs.com](https://isohypse-demo.stoatworks-labs.com/)
 - User guide: [stoatworks-labs.com/software/isohypse/guide](https://stoatworks-labs.com/software/isohypse/guide/)
 
 ## Reporting something

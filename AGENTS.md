@@ -109,4 +109,65 @@ order of pen; with Flood up, it is the sea rising.
   doesn't mind).
 - The sweep covers the world's whole range; zoomed into a region, most of a pass is spent
   out of view. A "Sweep Range: view" would need the visible range, a reduction per frame.
-- No browser demo, no guide, no presets.
+- No presets.
+
+## The browser demo (2026-10-28)
+
+`demo/` is <https://isohypse-demo.stoatworks-labs.com>, built to the fleet's `resolume-demo`
+kit rules (`~/Projects/resolume/specs/DEMO-BRIEF.md`) in the demo sweep of 28 October 2026,
+from slipstream's. Both plugins (`kind: ['source', 'effect']`, a Plugin dropdown). What a
+reader of it must know:
+
+- **The shaders are the plugin's**, all nine pieces plus kVersion, spliced by
+  `demo/tools/check_shaders.py --write` into `demo/shaders.js` and compared character for
+  character, with the JOIN on both sides (`Assemble()` over an initializer list, the map pass
+  as kMapLibrary + kMapFragment, InitGL's six stages, plugin.js's copy). All six programs
+  compile and link in WebGL2 as spliced: nothing needed `port()` beyond its usual version and
+  precision lines. `tools/verify.sh` runs the check.
+- **The maps are the plugin's, the globes halved.** `demo/tools/make_worlds.py` writes
+  `demo/worlds/`: the places byte for byte (git stores them once), the globes as the exact
+  2 × 2 mean (Earth 2048 × 1024, the rest 1024 × 512; on Venus, Pluto and Charon a pixel is
+  measured where two of its four were, the rule make-worlds.py used), and `table.js` from
+  `source/WorldTable.inc`. 16 MB in all, 3.1 MB the largest file. `--check` (in verify.sh)
+  fails when `data/` or the table changes and `demo/worlds/` does not. Remake both together.
+- **The PNGs are decoded in plugin.js**, a 16-bit greyscale decoder over
+  `DecompressionStream('deflate')`: the browser's own decoder hands back 8 bits, which would
+  terrace every map. It refuses anything make-worlds.py does not write.
+- **The heights are RG16 where the browser has `EXT_texture_norm16`** (desktop Chrome does),
+  else RG32F (exact, needs `OES_texture_float_linear`), else RG16F (half float: on a Grand
+  Canyon test 99.4% of pixels within a level of RG16, where RG32F was 99.999%). The note
+  under the picture says which.
+- **The CPU half is a port**: Controls.cpp, SweepClock.cpp, Worlds.cpp's dropdowns, gap filler
+  and texels, Isohypse.cpp's styles, orientation and the CPU half of ProcessOpenGL (between
+  the PORT and FRAME markers in `demo/plugin.js`). Change those and you change the port too.
+  The plugin's table size is the texture's size there; here the texture is the served file,
+  so HeightSize is the served size (half for a globe) -- the one deliberate departure.
+- **No first-frame load.** Every world is fetched, the first included, so the page draws its
+  ground alone until the Moon arrives; a new world leaves the old one up, as the plugin does.
+- **No host tempo**: Sweep Bars runs on the plugin's own 120 BPM fallback. Restart is a toggle
+  the page releases after one frame; Index Every and Seed are dropdowns of every value.
+- **The page's own `differences` list says all of this on the page.** Keep it true.
+
+How it was verified, and how to again (it needs this Mac's GPU, Chrome and node, so verify.sh
+does not run it):
+
+- `demo/tools/crosscheck/crosscheck.py --half` (after `cmake --build build --target ihtest`):
+  twelve cases at 1280 × 720, frame 60 -- the Moon at the defaults, Mars Neon map, Earth
+  Survey map with Tints and Shade, Earth globe flooding on a Bounce, Pluto's far side, Venus
+  Manual in Height Colour, Everest in Plotter with Wobble, Sydney zoomed and turned, Generated
+  Craters morphing and Continents in Survey, the Over on the harness's card as Clip and with
+  the Moon in Neon over it -- rendered by `ihtest` and by the page (served with the plugin's
+  full-size globes for the comparison) and compared pixel by pixel. 28 October 2026, on the
+  M4 Max through Chrome's ANGLE/Metal: every case had at least 99.979% of pixels within one
+  level of 255 of the plugin's (nine of the twelve 99.99% or more, five 100.000% to three
+  places), at most 56
+  pixels in a case off by more than four (the Earth globe, on contour edges), mean difference
+  under 0.003. The negative control, the page one frame late, came out 88.5% within one level
+  and fails. The page as it ships, on its half-size globes, was 99.68% (Venus) to 99.98% (the
+  Moon) within one level of the plugin at full size, at 1280 × 720.
+- Headless by hand, through `wrangler dev` (so `_headers`' CSP applied) on this machine: no
+  console messages at all; Style, Zoom, World, Place, Terrain and Restart each moved the
+  picture or the sweep; the Plugin dropdown gave the Over its own defaults (World Clip, Lines
+  24), its World list with Clip, its Clip group and no Background; `?embed=1` drew the Moon
+  bare at 1280 × 720 and `?embed=1&plugin=over&world=0&clip=ramp&style=2` Earth in Neon over
+  the ramps; a 390 px wide window had no sideways scroll; `tools/` was not served.

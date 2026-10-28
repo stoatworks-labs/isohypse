@@ -30,7 +30,17 @@ shader's `ageOf` are one function in two languages), or the World/Place dropdown
 - Film: `./build/ihtest --film 600 --size 1280x720 --script cues | ffmpeg -f rawvideo -pix_fmt rgba -s 1280x720 -r 60 -i - out.mp4`
 - A clip through it: `ffmpeg -i in.mov -vf scale=1280:720,fps=60 -f rawvideo -pix_fmt rgba - | ./build/ihtest --over --pipe --size 1280x720 | ffmpeg …`
 - Remake the maps: `python3 tools/make-worlds.py` (downloads ~1 GB; writes `data/` and
-  `source/WorldTable.inc` together, never one without the other)
+  `source/WorldTable.inc` together, never one without the other), then
+  `python3 demo/tools/make_worlds.py` for the browser demo's copies
+
+## Browser demo
+- `demo/` is <https://isohypse-demo.stoatworks-labs.com>; `.github/workflows/deploy.yml`
+  deploys it on a push to main (a route, not a custom domain: `wrangler.toml`).
+- After a shader edit: `python3 demo/tools/check_shaders.py --write` (verify.sh fails on drift).
+- After a map or table change: `python3 demo/tools/make_worlds.py` (verify.sh runs `--check`).
+- Locally: `python3 -m http.server -d demo`, or `npx wrangler dev` for the real `_headers`.
+- Against the plugin: `python3 demo/tools/crosscheck/crosscheck.py --half` (needs `build/ihtest`,
+  Chrome and node). AGENTS.md has the gaps and the last figures.
 
 ## Verify
 - Everything: `tools/verify.sh` (set `TMPDIR` to a scratch directory in a sandboxed

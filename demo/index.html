@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Isohypse — browser demo | Stoatworks Labs</title>
+    <meta name="description" content="Try the Isohypse FFGL source and effect for Resolume in your browser: contour lines of the Moon, Mars, Earth and the rest of the rocky solar system, twenty-two places on Earth, a world it makes up or your own clip, swept through by a line climbing from the lowest ground to the highest. The plugin's own GLSL, ported to WebGL2 unedited, on the plugin's own height maps (the globes at half its resolution), fed by a JavaScript port of its CPU half. A demo, not the plugin." />
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="./vendor/kit.css" />
+    <link rel="canonical" href="https://isohypse-demo.stoatworks-labs.com/" />
+  </head>
+  <body>
+    <main id="demo">
+      <noscript>
+        <p>
+          This demo runs the plugin's shaders and a port of its CPU half in your
+          browser, so it needs JavaScript and WebGL2. The plugin itself, its
+          source and its downloads are on
+          <a href="https://github.com/stoatworks-labs/isohypse">its repository</a>.
+        </p>
+      </noscript>
+    </main>
+
+    <!-- Outside #demo, so the kit leaves it alone and embed mode hides it. The
+         places' sources require this attribution to travel with their data. -->
+    <section id="map-credits" style="max-width: 1400px; margin: -40px auto 0; padding: 0 20px 48px;">
+      <details class="differences">
+        <summary>Where the maps come from</summary>
+        <p>
+          Every height on this page is a measurement somebody else made. The files
+          are the plugin's own (<a href="https://github.com/stoatworks-labs/isohypse/blob/main/data/SOURCES.md">data/SOURCES.md</a>
+          has every product, its URL, its checksum and what was done to it); the globes
+          are served here at half the plugin's resolution, made from its files by
+          <code>demo/tools/make_worlds.py</code>.
+        </p>
+        <ul>
+          <li><strong>Earth</strong>: NOAA National Centers for Environmental Information. 2022: ETOPO 2022 15 Arc-Second Global Relief Model. <a href="https://doi.org/10.25921/fd45-gt74">doi:10.25921/fd45-gt74</a>. Public domain.</li>
+          <li><strong>Moon</strong>: LRO Lunar Orbiter Laser Altimeter, LDEM_16 — NASA/GSFC/MIT, the LOLA team. Smith, D. E., et al. (2010), Space Sci. Rev. 150, 209–241. Public domain.</li>
+          <li><strong>Mars</strong>: MGS Mars Orbiter Laser Altimeter, the MOLA DEM mosaic — NASA/GSFC MOLA Science Team; USGS Astrogeology Science Center. Smith, D. E., et al. (2001), J. Geophys. Res. 106(E10), 23689–23722. CC0 / public domain.</li>
+          <li><strong>Mercury</strong>: MESSENGER Global DEM 665 m v2 — NASA/JHUAPL/Carnegie Institution of Washington/USGS. Becker, K. J., et al. (2016), 47th LPSC, abstract 2959. Public domain.</li>
+          <li><strong>Venus</strong>: Magellan Global Topography 4641 m — NASA/JPL Magellan Team; P. Ford and G. Pettengill (MIT); USGS Astrogeology. Ford, P. G., &amp; Pettengill, G. H. (1992), J. Geophys. Res. 97(E8), 13103–13114. Public domain.</li>
+          <li><strong>Ceres and Vesta</strong>: Dawn Framing Camera HAMO global DTMs — NASA/JPL-Caltech/UCLA/MPS/DLR/IDA, via USGS Astrogeology. Preusker, F., et al. (2016), 47th LPSC, abstract 1954; Preusker, F., et al. (2014), LPI Contrib. 1773. No access or use constraints (NASA PDS).</li>
+          <li><strong>Pluto and Charon</strong>: New Horizons LORRI-MVIC global DEMs, 300 m — NASA/JHUAPL/SwRI/LPI, the New Horizons team, via USGS Astrogeology. Schenk, P. M., et al. (2018), Icarus 314, 400–433; Schenk, P. M., et al. (2018), Icarus 315, 124–145. No access constraints (NASA).</li>
+          <li>
+            <strong>The twenty-two places</strong>: Terrain Tiles on AWS Open Data — Mapzen / Tilezen
+            (<a href="https://github.com/tilezen/joerd/blob/master/docs/attribution.md">joerd</a>), whose sources'
+            licences require this attribution, copied verbatim from joerd's docs/attribution.md:
+            <ul>
+              <li>ArcticDEM terrain data DEM(s) were created from DigitalGlobe, Inc., imagery and funded under National Science Foundation awards 1043681, 1559691, and 1542736;</li>
+              <li>Australia terrain data © Commonwealth of Australia (Geoscience Australia) 2017;</li>
+              <li>Austria terrain data © offene Daten Österreichs – Digitales Geländemodell (DGM) Österreich;</li>
+              <li>Canada terrain data contains information licensed under the Open Government Licence – Canada;</li>
+              <li>Europe terrain data produced using Copernicus data and information funded by the European Union - EU-DEM layers;</li>
+              <li>Global ETOPO1 terrain data U.S. National Oceanic and Atmospheric Administration</li>
+              <li>Mexico terrain data source: INEGI, Continental relief, 2016;</li>
+              <li>New Zealand terrain data Copyright 2011 Crown copyright (c) Land Information New Zealand and the New Zealand Government (All rights reserved);</li>
+              <li>Norway terrain data © Kartverket;</li>
+              <li>United Kingdom terrain data © Environment Agency copyright and/or database right 2015. All rights reserved;</li>
+              <li>United States 3DEP (formerly NED) and global GMTED2010 and SRTM terrain data courtesy of the U.S. Geological Survey.</li>
+            </ul>
+          </li>
+        </ul>
+        <p>
+          The idea is Sebastian Lague's, from
+          <a href="https://youtu.be/qyNWDzO6kKQ">I Made a Pen Plotter to Draw Maps of the Moon</a>;
+          no code, data or imagery of his is used. The rest of the plugin's debts are in
+          <a href="https://github.com/stoatworks-labs/isohypse/blob/main/ATTRIBUTIONS.md">ATTRIBUTIONS.md</a>.
+        </p>
+      </details>
+    </section>
+
+    <script type="module" src="./plugin.js"></script>
+    <script
+      src="./vendor/support-footer.js"
+      defer
+      data-app="Isohypse"
+      data-repo="https://github.com/stoatworks-labs/isohypse"
+      data-note="A browser demo of the plugin's shaders over a port of its CPU half, on the plugin's own height maps. Nothing you load here leaves your machine."
+    ></script>
+  </body>
+</html>
