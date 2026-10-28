@@ -91,8 +91,8 @@ Gas giants have no ground to contour. Jupiter was asked.
   drifting up or down, ±4 levels a second), Restart.
 - **Look:** Style (*Ink*, *Plotter*, *Neon*, *Survey*), Hue (the sweep's colour, and the
   lines' in Neon), Height Colour, Glow, Shade (hill-shading), Tints (each band between two
-  contours in its height's colour), Wobble (a hand on the pen), Background (0 leaves the
-  world on transparency, to layer).
+  contours in its height's colour), Wobble (a hand on the pen), Background (the source
+  only: 0 leaves the world on transparency, to layer; the Over's ground is its clip).
 - **Generated:** Terrain, Seed, Feature Size, Roughness, Sea, Morph.
 - **Clip** (the Over only): Clip Show (how much of the picture stays under the lines),
   Invert, Mix.
@@ -104,7 +104,7 @@ others; it has a sea floor.
 
 ## Status
 
-**v0.1.0, unreleased, 27 October 2026: local only, early days.**
+**v0.1.0, unreleased, 27 October 2026: early days.**
 
 ### Measured offline, on macOS
 
@@ -125,7 +125,7 @@ universal Release build (27 October 2026). What it establishes:
 | `--globe` | the disc's radius within **0.001 px** of 0.92 × Zoom × half the height; its limb antialiased |
 | `--clock` | a pass in Sweep Time to **1e-9**; Restart; a pass on 1 and 4 bars follows a synthetic host's bar phase to **3e-8** of a pass |
 | `--alpha`, `--state`, `--resize` | transparent off the world with Background 0, premultiplied; the host's GL state comes back; a new raster under a running instance |
-| `--controls` | all **41** controls change the picture where they should |
+| `--controls` | all **41** controls change the picture where they should, and each of the **37** the Over shares with the source changes the Over's picture too |
 | `--negative` | **5** deliberately wrong models, **5** caught |
 | mutation | **13** one-character mutants of the shipped GLSL and C++, **13** caught |
 | shaders | all 7 compile through `glslc`, not merely through Apple's driver |
@@ -152,6 +152,11 @@ made at when the composition changes size (its resize is *Original*, so it shows
 size), and a clip smaller than the composition reaches an effect as the composition's
 frame with the clip inset in it, so the Over's worlds draw past the clip's edges.
 
+Those runs were of the build before registration. Since then the About block has gained
+its *User guide* button, and the Over no longer lists Background, which it never read (its
+ground is the clip, mixed in by Clip Show): the source has 43 parameters and the Over 45,
+and Arena hasn't seen that build.
+
 **Cost** on this Mac's GPU (`ihtest --bench`, ms a frame, `glFinish` timed):
 
 | plugin | what | 1080p | 4K |
@@ -165,14 +170,16 @@ frame with the clip inset in it, so the Over's worlds draw past the clip's edges
 ### On Windows, in CI
 
 `ci.yml` builds both DLLs on GitHub's `windows-2022` (MSVC, GLEW static from vcpkg) on every
-pull request, and `tools/wincheck.ps1` loads each one as a host would: `SW Isohypse` /
-`IH01` / source with 42 parameters and `SW Isohypse Over` / `IH02` / effect with 45, the
+push to main and every pull request, and `tools/wincheck.ps1` loads each one as a host would:
+`SW Isohypse` / `IH01` / source with 43 parameters and `SW Isohypse Over` / `IH02` / effect
+with 45 (42 and 45 before the changes above), the
 names read back as the sixteen characters a host reads, and all 31 maps read out of each
 DLL's own resources, byte for byte the files in `data/`. First green 27 October 2026. A
 Windows runner has no GL, so nothing there draws a frame.
 
 **Not tested anywhere else.** It has never been loaded into Resolume on Windows, and no GPU
-but this Mac's has run it. There is no user guide, browser demo, video or preset yet.
+but this Mac's has run it. The user guide is [docs/USER-GUIDE.md](docs/USER-GUIDE.md); there
+is no browser demo or preset yet.
 Each bundle carries every map, 40 MB of them.
 
 ## Build
@@ -231,3 +238,7 @@ MIT for the code. See [LICENSE](LICENSE) and [ATTRIBUTIONS.md](ATTRIBUTIONS.md).
 are public-domain NASA, USGS and NOAA products, and the Terrarium tiles' sources, some
 under CC BY and Open Government Licences: their credits are in
 [data/SOURCES.md](data/SOURCES.md) and ATTRIBUTIONS.md, and travel with the plugin.
+
+<!-- attributions:start -->
+This project is built on other people's work — see [ATTRIBUTIONS.md](ATTRIBUTIONS.md).
+<!-- attributions:end -->
