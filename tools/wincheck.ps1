@@ -83,8 +83,12 @@ Check ( $gotName -eq $Name ) "name '$gotName', as a host reads char[16] (expecte
 Check ( $gotType -eq $wantType ) "type $gotType, $Kind"
 
 # FF_GET_NUM_PARAMETERS (4) and FF_GET_PARAMETER_NAME (5): the SDK builds a
-# prototype instance to answer, so the plugin's constructor runs here.
-$count = [int]( $plugMain.Invoke( 4, [IntPtr]::Zero, [IntPtr]::Zero ).ToInt64() -band 0xffffffff )
+# prototype instance to answer, so the plugin's constructor runs here. The
+# count is the low 32 bits of an FFMixed, as a host reads it: the high half of
+# the register is whatever the plugin left there (333 on windows-latest's
+# MSVC). 0xffffffffL, not 0xffffffff, which PowerShell reads as an Int32 -1
+# and so masks nothing.
+$count = [int]( $plugMain.Invoke( 4, [IntPtr]::Zero, [IntPtr]::Zero ).ToInt64() -band 0xffffffffL )
 $names = @()
 for( $i = 0; $i -lt $count; $i++ )
 {
