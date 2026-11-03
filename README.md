@@ -28,6 +28,8 @@ Over**, an effect that draws the same over the clip or reads the clip itself as 
 An isohypse is a line of equal height. It is the proper word for a contour, and it was
 free.
 
+The [project page](https://stoatworks-labs.com/software/isohypse/) has the downloads, the [user guide](https://stoatworks-labs.com/software/isohypse/guide/) and the video.
+
 ![Four frames: the Moon as a globe in white contours on black with an orange sweep line climbing through its basins; Earth as a survey map with green land, blue sea, brown contours and hill-shading; the Everest massif as a pen plot on cream paper, the sweep outlining the summit ridge in red; and a video clip of a circuit board turned into white contour lines over the dimmed picture](docs/hero.png)
 
 <sub>Rendered by the plugin's offline harness (`ihtest`), not captured from Resolume. The
